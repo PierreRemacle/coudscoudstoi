@@ -1,0 +1,101 @@
+<header class="topbar">
+  <div>
+    <div class="topbar-title">Bibliothèque</div>
+    <div class="topbar-sub"><%= @total_patrons %> patron<%= "s" if @total_patrons != 1 %> · <%= @patrons.count %> résultat<%= "s" if @patrons.count != 1 %> affiché<%= "s" if @patrons.count != 1 %></div>
+  </div>
+  <%= form_with url: patrons_path, method: :get, class: "search" do |f| %>
+    <i data-lucide="search"></i>
+    <%= f.search_field :q, value: params[:q], placeholder: "Rechercher un patron, une marque…" %>
+    <%= hidden_field_tag :marque_id, params[:marque_id] if params[:marque_id].present? %>
+    <%= hidden_field_tag :metrage_min, params[:metrage_min] if params[:metrage_min].present? %>
+    <%= hidden_field_tag :metrage_max, params[:metrage_max] if params[:metrage_max].present? %>
+    <%= hidden_field_tag :depuis, params[:depuis] if params[:depuis].present? %>
+    <%= hidden_field_tag :jusqu_au, params[:jusqu_au] if params[:jusqu_au].present? %>
+    <% Array(params[:genre]).compact.each do |g| %>
+      <%= hidden_field_tag "genre[]", g %>
+    <% end %>
+    <% Array(params[:difficulte]).compact.each do |d| %>
+      <%= hidden_field_tag "difficulte[]", d %>
+    <% end %>
+    <% Array(params[:vetement]).compact.each do |v| %>
+      <%= hidden_field_tag "vetement[]", v %>
+    <% end %>
+    <% Array(params[:matiere]).compact.each do |m| %>
+      <%= hidden_field_tag "matiere[]", m %>
+    <% end %>
+  <% end %>
+  <div class="topbar-actions">
+    <%= link_to new_patron_path, class: "btn btn-primary" do %>
+      <i data-lucide="plus"></i>Nouveau patron
+    <% end %>
+  </div>
+</header>
+
+<div class="nav-body">
+  <%= render "filters", marques: @marques %>
+
+  <section class="results">
+    <div class="results-bar">
+      <div class="active-filters">
+        <% Array(params[:genre]).compact.each do |g| %>
+          <%= link_to patrons_path(params.permit(:marque_id, :metrage_min, :metrage_max, :depuis, :jusqu_au, :q).merge(genre: Array(params[:genre]).reject { |v| v == g }, difficulte: params[:difficulte], vetement: params[:vetement], matiere: params[:matiere])), class: "tag" do %>
+            <%= g.capitalize %> <i data-lucide="x"></i>
+          <% end %>
+        <% end %>
+        <% Array(params[:difficulte]).compact.each do |d| %>
+          <%= link_to patrons_path(params.permit(:marque_id, :metrage_min, :metrage_max, :depuis, :jusqu_au, :q).merge(genre: params[:genre], difficulte: Array(params[:difficulte]).reject { |v| v == d }, vetement: params[:vetement], matiere: params[:matiere])), class: "tag" do %>
+            <%= d.capitalize %> <i data-lucide="x"></i>
+          <% end %>
+        <% end %>
+        <% Array(params[:vetement]).compact.each do |v| %>
+          <%= link_to patrons_path(params.permit(:marque_id, :metrage_min, :metrage_max, :depuis, :jusqu_au, :q).merge(genre: params[:genre], difficulte: params[:difficulte], vetement: Array(params[:vetement]).reject { |x| x == v }, matiere: params[:matiere])), class: "tag" do %>
+            <%= v %> <i data-lucide="x"></i>
+          <% end %>
+        <% end %>
+        <% Array(params[:matiere]).compact.each do |m| %>
+          <%= link_to patrons_path(params.permit(:marque_id, :metrage_min, :metrage_max, :depuis, :jusqu_au, :q).merge(genre: params[:genre], difficulte: params[:difficulte], vetement: params[:vetement], matiere: Array(params[:matiere]).reject { |x| x == m })), class: "tag" do %>
+            <%= m %> <i data-lucide="x"></i>
+          <% end %>
+        <% end %>
+        <% if params[:marque_id].present? %>
+          <%= link_to patrons_path(params.permit(:metrage_min, :metrage_max, :depuis, :jusqu_au, :q).merge(genre: params[:genre], difficulte: params[:difficulte], vetement: params[:vetement], matiere: params[:matiere])), class: "tag" do %>
+            <%= @marques.find { |m| m.id.to_s == params[:marque_id] }&.nom %> <i data-lucide="x"></i>
+          <% end %>
+        <% end %>
+        <% if params[:metrage_min].present? || params[:metrage_max].present? %>
+          <%= link_to patrons_path(params.permit(:marque_id, :depuis, :jusqu_au, :q).merge(genre: params[:genre], difficulte: params[:difficulte], vetement: params[:vetement], matiere: params[:matiere])), class: "tag" do %>
+            <% if params[:metrage_min].present? && params[:metrage_max].present? %>
+              <%= params[:metrage_min] %>–<%= params[:metrage_max] %> m
+            <% elsif params[:metrage_min].present? %>
+              ≥ <%= params[:metrage_min] %> m
+            <% else %>
+              ≤ <%= params[:metrage_max] %> m
+            <% end %>
+            <i data-lucide="x"></i>
+          <% end %>
+        <% end %>
+        <% if params[:depuis].present? || params[:jusqu_au].present? %>
+          <%= link_to patrons_path(params.permit(:marque_id, :metrage_min, :metrage_max, :q).merge(genre: params[:genre], difficulte: params[:difficulte], vetement: params[:vetement], matiere: params[:matiere])), class: "tag" do %>
+            <% if params[:depuis].present? && params[:jusqu_au].present? %>
+              <%= Date.parse(params[:depuis]).strftime("%-d/%m/%Y") %> – <%= Date.parse(params[:jusqu_au]).strftime("%-d/%m/%Y") %>
+            <% elsif params[:depuis].present? %>
+              Depuis le <%= Date.parse(params[:depuis]).strftime("%-d/%m/%Y") %>
+            <% else %>
+              Jusqu'au <%= Date.parse(params[:jusqu_au]).strftime("%-d/%m/%Y") %>
+            <% end %>
+            <i data-lucide="x"></i>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="grid">
+      <%= render @patrons %>
+
+      <%= link_to new_patron_path, class: "add-card" do %>
+        <span class="ico"><i data-lucide="plus"></i></span>
+        <b>Ajouter un patron</b>
+      <% end %>
+    </div>
+  </section>
+</div>

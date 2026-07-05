@@ -1,0 +1,5 @@
+<%= form_with model: [patron, note], class: "note-add-form", style: "display:flex;gap:8px;align-items:flex-start;padding:12px 0;" do |f| %>
+  <%= f.hidden_field :auteur, value: current_user %>
+  <%= f.text_area :contenu, placeholder: "Ajouter une note…", class: "input", style: "flex:1;min-height:60px;resize:vertical;" %>
+  <%= f.submit "Ajouter", class: "btn btn-primary", style: "flex-shrink:0;" %>
+<% end %>

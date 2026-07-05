@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<!--
+  Gestionnaire de patrons — Page de NAVIGATION (index)
+  ----------------------------------------------------------------
+  Mockup HTML/CSS. Pour Ruby on Rails :
+   • Copier le <body> (à partir de <div class="app">) dans
+     app/views/patrons/index.html.erb
+   • Le formulaire de filtres est un GET vers patrons_path :
+       <%= form_with url: patrons_path, method: :get do |f| %> ... <% end %>
+   • Remplacer la grille de cartes par une boucle :
+       <% @patrons.each do |patron| %> ...carte... <% end %>
+   • Charger patrons.css via <%= stylesheet_link_tag "patrons" %>
+-->
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bibliothèque de patrons</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="patrons.css">
+</head>
+<body>
+  <div class="app">
+
+    <!-- Rail latéral -->
+    <nav class="rail">
+      <div class="rail-logo"><i data-lucide="scissors"></i></div>
+      <a class="rail-btn is-active" href="index.html" title="Bibliothèque"><i data-lucide="library"></i></a>
+      <a class="rail-btn" href="new.html" title="Nouveau patron"><i data-lucide="plus-square"></i></a>
+      <a class="rail-btn" href="#" title="Favoris"><i data-lucide="heart"></i></a>
+      <div class="rail-spacer">
+        <a class="rail-btn" href="#" title="Réglages"><i data-lucide="settings"></i></a>
+        <div class="rail-avatar">M</div>
+      </div>
+    </nav>
+
+    <main class="main">
+
+      <!-- Barre supérieure -->
+      <header class="topbar">
+        <div>
+          <div class="topbar-title">Bibliothèque</div>
+          <div class="topbar-sub">248 patrons · 6 résultats affichés</div>
+        </div>
+        <label class="search">
+          <i data-lucide="search"></i>
+          <input type="search" name="q" placeholder="Rechercher un patron, une marque…">
+        </label>
+        <div class="topbar-actions">
+          <a class="btn btn-primary" href="new.html"><i data-lucide="plus"></i>Nouveau patron</a>
+        </div>
+      </header>
+
+      <div class="nav-body">
+
+        <!-- Filtres (form GET) -->
+        <form class="filters" method="get" action="index.html">
+          <div class="filters-head">
+            <b><i data-lucide="sliders-horizontal"></i>Filtres</b>
+            <a class="link-accent" href="index.html">Réinitialiser</a>
+          </div>
+
+          <div class="filter-group">
+            <div class="filter-label">Marque</div>
+            <select class="select is-placeholder" name="marque">
+              <option value="">Toutes les marques</option>
+              <option>Atelier Nord</option>
+              <option>Coupe Libre</option>
+              <option>Maison Fil</option>
+              <option>Patron Perso</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <div class="filter-label">Genre</div>
+            <div class="chips">
+              <button type="button" class="chip is-active">Femme</button>
+              <button type="button" class="chip">Homme</button>
+              <button type="button" class="chip">Enfant</button>
+              <button type="button" class="chip">Bébé</button>
+              <button type="button" class="chip">Access.</button>
+            </div>
+          </div>
+
+          <div class="filter-group">
+            <div class="filter-label">Vêtement</div>
+            <select class="select is-placeholder" name="vetement">
+              <option value="">Tous les vêtements</option>
+              <option>Robe</option><option>Blouse</option><option>Jupe</option>
+              <option>Manteau</option><option>Pantalon</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <div class="filter-label">Difficulté</div>
+            <div class="seg">
+              <button type="button" class="seg-btn">Facile</button>
+              <button type="button" class="seg-btn is-active">Moyenne</button>
+              <button type="button" class="seg-btn">Difficile</button>
+            </div>
+          </div>
+
+          <div class="filter-group">
+            <div class="filter-label">Métrage max (m)</div>
+            <div class="range">
+              <div class="range-track">
+                <div class="range-fill" style="width:62%"></div>
+                <div class="range-knob" style="left:62%"></div>
+              </div>
+              <span class="range-val">3,2 m</span>
+            </div>
+          </div>
+
+          <div class="filter-group">
+            <div class="filter-label">Support</div>
+            <div class="checks">
+              <label class="check is-on"><span class="check-box"><i data-lucide="check"></i></span>PDF</label>
+              <label class="check"><span class="check-box"></span>Papier A1</label>
+              <label class="check"><span class="check-box"></span>Papier A5</label>
+            </div>
+          </div>
+        </form>
+
+        <!-- Résultats -->
+        <section class="results">
+          <div class="results-bar">
+            <div class="active-filters">
+              <span class="tag">Femme <i data-lucide="x"></i></span>
+              <span class="tag">Moyenne <i data-lucide="x"></i></span>
+            </div>
+            <div class="sort">Trier :
+              <span class="select">Récents <i data-lucide="chevron-down"></i></span>
+            </div>
+          </div>
+
+          <div class="grid">
+            <!-- Carte (à répéter avec @patrons.each) -->
+            <article class="card">
+              <div class="card-thumb"><span class="ph">photo</span><span class="badge is-med">Moyenne</span></div>
+              <div class="card-body">
+                <div class="card-brand">Atelier Nord</div>
+                <div class="card-name">Robe Capucine</div>
+                <div class="card-chips"><span class="mini-chip">Robe</span><span class="mini-chip">34–46</span></div>
+                <div class="card-meta"><span><i data-lucide="grid-3x3"></i>Viscose</span><span><i data-lucide="ruler"></i>2,5 m</span></div>
+              </div>
+            </article>
+
+            <article class="card">
+              <div class="card-thumb"><span class="ph">photo</span><span class="badge is-easy">Facile</span></div>
+              <div class="card-body">
+                <div class="card-brand">Coupe Libre</div>
+                <div class="card-name">Blouse Garance</div>
+                <div class="card-chips"><span class="mini-chip">Blouse</span><span class="mini-chip">36–44</span></div>
+                <div class="card-meta"><span><i data-lucide="grid-3x3"></i>Coton</span><span><i data-lucide="ruler"></i>1,6 m</span></div>
+              </div>
+            </article>
+
+            <article class="card">
+              <div class="card-thumb"><span class="ph">photo</span><span class="badge is-hard">Difficile</span></div>
+              <div class="card-body">
+                <div class="card-brand">Maison Fil</div>
+                <div class="card-name">Manteau Boréal</div>
+                <div class="card-chips"><span class="mini-chip">Manteau</span><span class="mini-chip">36–44</span></div>
+                <div class="card-meta"><span><i data-lucide="grid-3x3"></i>Lainage</span><span><i data-lucide="ruler"></i>3,2 m</span></div>
+              </div>
+            </article>
+
+            <article class="card">
+              <div class="card-thumb"><span class="ph">photo</span><span class="badge is-med">Moyenne</span></div>
+              <div class="card-body">
+                <div class="card-brand">Patron Perso</div>
+                <div class="card-name">Jupe Portefeuille</div>
+                <div class="card-chips"><span class="mini-chip">Jupe</span><span class="mini-chip">38–48</span></div>
+                <div class="card-meta"><span><i data-lucide="grid-3x3"></i>Lin</span><span><i data-lucide="ruler"></i>1,9 m</span></div>
+              </div>
+            </article>
+
+            <article class="card">
+              <div class="card-thumb"><span class="ph">photo</span><span class="badge is-easy">Facile</span></div>
+              <div class="card-body">
+                <div class="card-brand">Atelier Nord</div>
+                <div class="card-name">Débardeur Lila</div>
+                <div class="card-chips"><span class="mini-chip">Haut</span><span class="mini-chip">34–42</span></div>
+                <div class="card-meta"><span><i data-lucide="grid-3x3"></i>Jersey</span><span><i data-lucide="ruler"></i>1,1 m</span></div>
+              </div>
+            </article>
+
+            <a class="add-card" href="new.html">
+              <span class="ico"><i data-lucide="plus"></i></span>
+              <b>Ajouter un patron</b>
+            </a>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

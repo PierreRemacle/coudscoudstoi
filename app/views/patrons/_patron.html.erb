@@ -1,0 +1,38 @@
+<article class="card">
+  <%= link_to patron_path(patron), style: "text-decoration:none;color:inherit;display:contents;" do %>
+    <div class="card-thumb">
+      <% if patron.photos.attached? && patron.photos.first.present? %>
+        <%= image_tag url_for(patron.photos.first), style: "width:100%;height:100%;object-fit:cover;" %>
+      <% else %>
+        <span class="ph">photo</span>
+      <% end %>
+      <% if patron.difficulte.present? %>
+        <span class="badge <%= difficulte_css(patron) %>"><%= difficulte_label(patron) %></span>
+      <% end %>
+    </div>
+    <div class="card-body">
+      <div class="card-brand"><%= patron.marque&.nom %></div>
+      <div class="card-name"><%= patron.nom %></div>
+      <div class="card-chips">
+        <% if patron.vetement.present? %>
+          <span class="mini-chip"
+                style="cursor:pointer;"
+                onclick="event.stopPropagation(); window.location='<%= patrons_path(vetement: [patron.vetement]) %>'">
+            <%= patron.vetement %>
+          </span>
+        <% end %>
+        <% patron.tailles.each do |t| %>
+          <span class="mini-chip"><%= t %></span>
+        <% end %>
+      </div>
+      <div class="card-meta">
+        <% if patron.matiere.present? %>
+          <span><i data-lucide="grid-3x3"></i><%= patron.matiere %></span>
+        <% end %>
+        <% if patron.metrage.present? %>
+          <span><i data-lucide="ruler"></i><%= number_with_precision(patron.metrage, precision: 1, strip_insignificant_zeros: true) %> m</span>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</article>

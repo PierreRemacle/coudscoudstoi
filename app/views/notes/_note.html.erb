@@ -1,0 +1,16 @@
+<div class="note" style="border-left: 3px solid <%= note.couleur %>;display:flex;align-items:flex-start;gap:12px;">
+  <div style="flex:1">
+    <div class="by">
+      <span style="color:<%= note.couleur %>;font-weight:600;"><%= note.auteur %></span>
+      · <%= note.created_at.strftime("%-d %B %Y") %>
+    </div>
+    <p><%= note.contenu %></p>
+  </div>
+  <% if note.auteur == current_user %>
+    <%= button_to patron_note_path(patron, note), method: :delete,
+          class: "btn", style: "padding:4px 8px;flex-shrink:0;",
+          data: { turbo_confirm: "Supprimer cette note ?" } do %>
+      <i data-lucide="x" style="width:14px;height:14px;"></i>
+    <% end %>
+  <% end %>
+</div>

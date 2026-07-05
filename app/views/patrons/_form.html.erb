@@ -1,0 +1,230 @@
+<%= form_with model: patron, html: { multipart: true, class: "form-wrap", id: "patron-form" } do |f| %>
+  <%= f.hidden_field :genre, id: "patron-genre-value" %>
+  <%= f.hidden_field :taille_type, id: "patron-taille-type-value" %>
+  <%= f.hidden_field :poids, id: "patron-poids-value" %>
+  <%= f.hidden_field :difficulte, id: "patron-difficulte-value" %>
+
+  <% if patron.errors.any? %>
+    <div style="grid-column:1/-1;background:#fef2f2;border:1px solid #fecaca;color:#dc2626;padding:14px 18px;border-radius:10px;margin-bottom:4px;">
+      <b><%= patron.errors.count %> erreur<%= "s" if patron.errors.count > 1 %> :</b>
+      <ul style="margin:6px 0 0 18px;">
+        <% patron.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <!-- Colonne gauche : médias -->
+  <div class="side">
+
+    <!-- Photos -->
+    <div class="panel" data-controller="dropzone" data-dropzone-type-value="image">
+      <div class="panel-title">Photos du patron</div>
+      <label class="dropzone" data-dropzone-target="zone">
+        <span class="ico" data-dropzone-target="icon"><i data-lucide="image-plus"></i></span>
+        <b data-dropzone-target="label">Glisser des images</b>
+        <span class="hint">JPG · PNG · plusieurs fichiers</span>
+        <%= f.file_field :photos, multiple: true, accept: "image/*",
+              style: "display:none;",
+              data: { dropzone_target: "input", action: "change->dropzone#change" } %>
+      </label>
+      <div data-dropzone-target="preview" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;">
+        <% if patron.persisted? && patron.photos.attached? %>
+          <% patron.photos.each do |photo| %>
+            <%= image_tag url_for(photo), style: "width:80px;height:80px;object-fit:cover;border-radius:8px;" %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Fichiers -->
+    <div class="panel" data-controller="dropzone" data-dropzone-type-value="file">
+      <div class="panel-title">Fichiers du patron</div>
+      <div data-dropzone-target="list">
+        <% if patron.persisted? && patron.fichiers.attached? %>
+          <% patron.fichiers.each do |fichier| %>
+            <div class="file-row">
+              <span class="file-ico"><i data-lucide="file-text"></i></span>
+              <div style="flex:1;min-width:0">
+                <div class="file-name"><%= fichier.filename %></div>
+                <div class="file-meta"><%= number_to_human_size(fichier.byte_size) %></div>
+              </div>
+              <i data-lucide="check-circle-2" style="color:#2f9e6b"></i>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+      <label class="attach" data-dropzone-target="attach" for="patron_fichiers">
+        <i data-lucide="upload" data-dropzone-target="attachIcon"></i>
+        <span data-dropzone-target="attachText">Joindre des fichiers</span>
+      </label>
+      <%= f.file_field :fichiers, multiple: true,
+            id: "patron_fichiers",
+            style: "display:none;",
+            data: { dropzone_target: "input", action: "change->dropzone#change" } %>
+    </div>
+
+  </div>
+
+  <!-- Colonne droite : attributs -->
+  <div class="fields">
+
+    <div class="field">
+      <div class="field-label"><i data-lucide="type"></i>Nom</div>
+      <%= f.text_field :nom, class: "input", placeholder: "Nom du patron" %>
+    </div>
+
+    <div class="field top">
+      <div class="field-label" style="padding-top:10px"><i data-lucide="tag"></i>Marque</div>
+      <div>
+        <%= f.select :marque_id,
+              options_from_collection_for_select(marques, :id, :nom, patron.marque_id),
+              { include_blank: "— sans marque —" },
+              class: "select" %>
+        <div class="field-hint">Ou <%= link_to "+ ajouter une nouvelle marque", new_marque_path, class: "link-accent" %></div>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="field-label"><i data-lucide="users"></i>Genre</div>
+      <div class="chips" data-controller="chip" data-chip-target-param="patron-genre-value">
+        <% [["Femme","femme"],["Homme","homme"],["Enfant","enfant"],["Bébé","bebe"],["Accessoire","accessoire"],["Autre","autre"]].each do |label, val| %>
+          <button type="button"
+                  class="chip <%= patron.genre == val ? 'is-active' : '' %>"
+                  data-action="click->chip#select"
+                  data-chip-value-param="<%= val %>">
+            <%= label %>
+          </button>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="field-label"><i data-lucide="shirt"></i>Vêtement</div>
+      <div class="row">
+        <%= f.select :vetement,
+              options_for_select(Patron::VETEMENTS, patron.vetement),
+              { include_blank: "— choisir —" },
+              class: "select", style: "flex:1" %>
+      </div>
+    </div>
+
+    <div class="field top">
+      <div class="field-label" style="padding-top:6px"><i data-lucide="ruler"></i>Taille</div>
+      <div data-controller="seg-tabs" data-seg-tabs-target-param="patron-taille-type-value">
+        <div class="seg-tabs">
+          <button type="button"
+                  class="seg-tab <%= patron.taille_type != 'chiffres' ? 'is-active' : '' %>"
+                  data-action="click->seg-tabs#show"
+                  data-seg-tabs-value-param="lettres"
+                  data-seg-tabs-panel-param="sizes-lettres">
+            Lettres · XS – XXL
+          </button>
+          <button type="button"
+                  class="seg-tab <%= patron.taille_type == 'chiffres' ? 'is-active' : '' %>"
+                  data-action="click->seg-tabs#show"
+                  data-seg-tabs-value-param="chiffres"
+                  data-seg-tabs-panel-param="sizes-chiffres">
+            Chiffres · 34 – 48
+          </button>
+        </div>
+        <div id="sizes-lettres" class="size-grid" style="<%= patron.taille_type == 'chiffres' ? 'display:none' : '' %>">
+          <% %w[XS S M L XL XXL].each do |t| %>
+            <label>
+              <input type="checkbox" name="patron[tailles][]" value="<%= t %>"
+                     style="display:none;"
+                     <%= "checked" if patron.tailles.include?(t) %>>
+              <button type="button"
+                      class="size-btn <%= patron.tailles.include?(t) ? 'is-active' : '' %>"
+                      data-action="click->seg-tabs#toggleSize"
+                      data-seg-tabs-label-param="<%= t %>">
+                <%= t %>
+              </button>
+            </label>
+          <% end %>
+        </div>
+        <div id="sizes-chiffres" class="size-grid" style="<%= patron.taille_type != 'chiffres' ? 'display:none' : '' %>">
+          <% %w[34 36 38 40 42 44 46 48].each do |t| %>
+            <label>
+              <input type="checkbox" name="patron[tailles][]" value="<%= t %>"
+                     style="display:none;"
+                     <%= "checked" if patron.tailles.include?(t) %>>
+              <button type="button"
+                      class="size-btn <%= patron.tailles.include?(t) ? 'is-active' : '' %>"
+                      data-action="click->seg-tabs#toggleSize"
+                      data-seg-tabs-label-param="<%= t %>">
+                <%= t %>
+              </button>
+            </label>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="field top">
+      <div class="field-label" style="padding-top:10px"><i data-lucide="scissors"></i>Métrage</div>
+      <div>
+        <div class="input-unit">
+          <%= f.text_field :metrage, class: "input", placeholder: "2,50" %>
+          <span class="unit">m</span>
+        </div>
+        <div class="field-hint">Métrage total de tissu nécessaire.</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="field-label"><i data-lucide="grid-3x3"></i>Matière</div>
+      <%= f.select :matiere,
+            options_for_select(Patron::MATIERES, patron.matiere),
+            { include_blank: "— choisir —" },
+            class: "select" %>
+    </div>
+
+    <div class="field">
+      <div class="field-label"><i data-lucide="weight"></i>Poids du tissu</div>
+      <div class="seg-3" data-controller="chip" data-chip-target-param="patron-poids-value">
+        <% [["Léger","leger"],["Moyen","moyen"],["Lourd","lourd"]].each do |label, val| %>
+          <button type="button"
+                  class="seg-tab <%= patron.poids == val ? 'is-active' : '' %>"
+                  data-action="click->chip#select"
+                  data-chip-value-param="<%= val %>">
+            <%= label %>
+          </button>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="field-label"><i data-lucide="bar-chart-3"></i>Difficulté</div>
+      <div class="seg-3" data-controller="chip" data-chip-target-param="patron-difficulte-value">
+        <% [["Facile","facile"],["Moyenne","moyenne"],["Difficile","difficile"]].each do |label, val| %>
+          <button type="button"
+                  class="seg-tab <%= patron.difficulte == val ? 'is-active' : '' %>"
+                  data-action="click->chip#select"
+                  data-chip-value-param="<%= val %>">
+            <%= label %>
+          </button>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="field-label"><i data-lucide="file-text"></i>Support</div>
+      <div class="support" data-controller="multichip">
+        <% [["PDF","PDF"],["Papier A1","Papier A1"],["Papier A5","Papier A5"]].each do |label, val| %>
+          <label class="check <%= patron.supports.include?(val) ? 'is-on' : '' %>"
+                 data-action="click->multichip#toggle"
+                 data-multichip-value-param="<%= val %>">
+            <span class="check-box"><% if patron.supports.include?(val) %><i data-lucide="check"></i><% end %></span>
+            <input type="checkbox" name="patron[supports][]" value="<%= val %>"
+                   style="display:none;"
+                   <%= "checked" if patron.supports.include?(val) %>>
+            <%= label %>
+          </label>
+        <% end %>
+      </div>
+    </div>
+
+  </div>
+<% end %>

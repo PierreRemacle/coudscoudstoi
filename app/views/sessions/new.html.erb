@@ -1,0 +1,19 @@
+<div style="background:#fff;border-radius:20px;padding:48px;width:380px;box-shadow:0 4px 32px rgba(0,0,0,.08);text-align:center;">
+  <div style="margin-bottom:24px;">
+    <i data-lucide="scissors" style="width:40px;height:40px;color:#5b50e3;"></i>
+  </div>
+  <h1 style="font-size:22px;font-weight:700;color:#1b1b24;margin:0 0 6px;">Patrons de couture</h1>
+  <p style="color:#9a9aa8;font-size:14px;margin:0 0 32px;">Entrez le mot de passe pour accéder à la bibliothèque.</p>
+
+  <% if alert.present? %>
+    <div style="background:#fef2f2;border:1px solid #fecaca;color:#dc2626;padding:10px 14px;border-radius:8px;margin-bottom:20px;font-size:13px;"><%= alert %></div>
+  <% end %>
+
+  <%= form_with url: session_path, method: :post do |f| %>
+    <div style="margin-bottom:20px;text-align:left;">
+      <%= f.label :password, "Mot de passe", style: "display:block;font-size:13px;font-weight:600;color:#1b1b24;margin-bottom:6px;" %>
+      <%= f.password_field :password, class: "input", style: "width:100%;box-sizing:border-box;", placeholder: "••••••••", autofocus: true %>
+    </div>
+    <%= f.submit "Entrer", class: "btn btn-primary", style: "width:100%;justify-content:center;" %>
+  <% end %>
+</div>

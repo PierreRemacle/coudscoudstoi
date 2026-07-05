@@ -1,0 +1,15 @@
+<header class="topbar">
+  <%= link_to patrons_path, class: "rail-btn", style: "color:#9a9aa8" do %>
+    <i data-lucide="arrow-left"></i>
+  <% end %>
+  <div>
+    <div class="topbar-title">Nouveau patron</div>
+    <div class="topbar-crumb">Bibliothèque · Ajouter une entrée</div>
+  </div>
+  <div class="topbar-actions">
+    <button type="reset" form="patron-form" class="btn"><i data-lucide="rotate-ccw"></i>Réinitialiser</button>
+    <button type="submit" form="patron-form" class="btn btn-primary"><i data-lucide="check"></i>Enregistrer</button>
+  </div>
+</header>
+
+<%= render "form", patron: @patron, marques: @marques %>

@@ -1,0 +1,25 @@
+<header class="topbar">
+  <%= link_to new_patron_path, class: "rail-btn", style: "color:#9a9aa8" do %>
+    <i data-lucide="arrow-left"></i>
+  <% end %>
+  <div>
+    <div class="topbar-title">Nouvelle marque</div>
+    <div class="topbar-crumb">Bibliothèque · Ajouter une marque</div>
+  </div>
+</header>
+
+<div style="padding:40px 32px;max-width:480px;">
+  <% if @marque.errors.any? %>
+    <div style="background:#fef2f2;border:1px solid #fecaca;color:#dc2626;padding:14px 18px;border-radius:10px;margin-bottom:20px;">
+      <%= @marque.errors.full_messages.to_sentence %>
+    </div>
+  <% end %>
+
+  <%= form_with model: @marque do |f| %>
+    <div class="field">
+      <div class="field-label"><i data-lucide="tag"></i>Nom de la marque</div>
+      <%= f.text_field :nom, class: "input", placeholder: "ex: Atelier Nord", autofocus: true %>
+    </div>
+    <%= f.submit "Créer la marque", class: "btn btn-primary", style: "margin-top:16px;" %>
+  <% end %>
+</div>

@@ -1,0 +1,28 @@
+<header class="topbar">
+  <%= link_to patron_path(@patron), class: "rail-btn", style: "color:#9a9aa8" do %>
+    <i data-lucide="arrow-left"></i>
+  <% end %>
+  <div>
+    <div class="topbar-title">Modifier : <%= @patron.nom %></div>
+    <div class="topbar-crumb">Bibliothèque · Modifier une entrée · Ajouté par <%= @patron.ajoute_par %></div>
+  </div>
+  <div class="topbar-actions">
+    <button type="submit" form="patron-form" class="btn btn-primary"><i data-lucide="check"></i>Enregistrer</button>
+    <%= button_to patron_path(@patron), method: :delete, class: "btn", style: "color:#d05a4e;",
+          data: { turbo_confirm: "Supprimer « #{@patron.nom} » définitivement ?" } do %>
+      <i data-lucide="trash-2"></i>Supprimer
+    <% end %>
+  </div>
+</header>
+
+<%= render "form", patron: @patron, marques: @marques %>
+
+<div style="padding:24px 32px 40px;">
+  <div class="panel-title" style="margin-bottom:12px;"><i data-lucide="sticky-note"></i> Notes</div>
+  <div class="notes">
+    <% @notes.each do |note| %>
+      <%= render "notes/note", note: note, patron: @patron %>
+    <% end %>
+    <%= render "notes/form", patron: @patron, note: @note %>
+  </div>
+</div>

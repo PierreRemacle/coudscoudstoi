@@ -1,0 +1,110 @@
+<header class="topbar">
+  <%= link_to patrons_path, class: "rail-btn", style: "color:#9a9aa8" do %>
+    <i data-lucide="arrow-left"></i>
+  <% end %>
+  <div>
+    <div class="topbar-title"><%= @patron.nom %></div>
+    <div class="topbar-crumb"><%= @patron.marque&.nom || "Sans marque" %> · Ajouté par <%= @patron.ajoute_par %></div>
+  </div>
+  <div class="topbar-actions">
+    <%= link_to edit_patron_path(@patron), class: "btn" do %>
+      <i data-lucide="pencil"></i>Modifier
+    <% end %>
+  </div>
+</header>
+
+<div style="padding:24px 32px;display:flex;flex-direction:column;gap:28px;">
+
+  <!-- Attributes -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px 24px;">
+    <% if @patron.genre.present? %>
+      <div><div class="field-label"><i data-lucide="users"></i>Genre</div><div><%= @patron.genre.capitalize %></div></div>
+    <% end %>
+    <% if @patron.vetement.present? %>
+      <div><div class="field-label"><i data-lucide="shirt"></i>Vêtement</div><div><%= @patron.vetement %></div></div>
+    <% end %>
+    <div><div class="field-label"><i data-lucide="calendar"></i>Ajouté le</div><div><%= @patron.created_at.strftime("%-d %B %Y") %></div></div>
+    <% if @patron.matiere.present? %>
+      <div><div class="field-label"><i data-lucide="grid-3x3"></i>Matière</div><div><%= @patron.matiere %></div></div>
+    <% end %>
+    <% if @patron.metrage.present? %>
+      <div><div class="field-label"><i data-lucide="scissors"></i>Métrage</div><div><%= number_with_precision(@patron.metrage, precision: 2, strip_insignificant_zeros: true) %> m</div></div>
+    <% end %>
+    <% if @patron.poids.present? %>
+      <div><div class="field-label"><i data-lucide="weight"></i>Poids</div><div><%= @patron.poids.capitalize %></div></div>
+    <% end %>
+    <% if @patron.difficulte.present? %>
+      <div>
+        <div class="field-label"><i data-lucide="bar-chart-3"></i>Difficulté</div>
+        <span class="badge <%= difficulte_css(@patron) %>" style="position:static;"><%= difficulte_label(@patron) %></span>
+      </div>
+    <% end %>
+    <% if @patron.tailles.any? %>
+      <div>
+        <div class="field-label"><i data-lucide="ruler"></i>Tailles</div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px;">
+          <% @patron.tailles.each do |t| %><span class="mini-chip"><%= t %></span><% end %>
+        </div>
+      </div>
+    <% end %>
+    <% if @patron.supports.any? %>
+      <div>
+        <div class="field-label"><i data-lucide="file-text"></i>Supports</div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px;">
+          <% @patron.supports.each do |s| %><span class="mini-chip"><%= s %></span><% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Photos + fichiers -->
+  <div class="panel">
+    <div class="panel-title">Photos</div>
+    <% if @patron.photos.attached? %>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;">
+        <% @patron.photos.each do |photo| %>
+          <a href="<%= url_for(photo) %>" target="_blank">
+            <%= image_tag url_for(photo), style: "width:160px;height:160px;object-fit:cover;border-radius:10px;" %>
+          </a>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="dropzone" style="pointer-events:none;opacity:.5;min-height:80px;">
+        <span class="ico"><i data-lucide="image"></i></span>
+        <span class="hint">Aucune photo</span>
+      </div>
+    <% end %>
+  </div>
+
+  <% if @patron.fichiers.attached? %>
+    <div class="panel">
+      <div class="panel-title">Fichiers</div>
+      <% @patron.fichiers.each do |fichier| %>
+        <div class="file-row">
+          <%= link_to url_for(fichier), target: "_blank", style: "display:flex;align-items:center;gap:12px;flex:1;min-width:0;text-decoration:none;color:inherit;" do %>
+            <span class="file-ico"><i data-lucide="file-text"></i></span>
+            <div style="min-width:0;">
+              <div class="file-name"><%= fichier.filename %></div>
+              <div class="file-meta"><%= number_to_human_size(fichier.byte_size) %></div>
+            </div>
+          <% end %>
+          <%= link_to rails_blob_path(fichier, disposition: "attachment"), style: "flex-shrink:0;" do %>
+            <i data-lucide="download" style="color:#5b50e3;"></i>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <!-- Notes — full width -->
+  <div>
+    <div class="panel-title" style="margin-bottom:12px;"><i data-lucide="sticky-note"></i> Notes</div>
+    <div class="notes">
+      <% @notes.each do |note| %>
+        <%= render "notes/note", note: note, patron: @patron %>
+      <% end %>
+      <%= render "notes/form", patron: @patron, note: @note %>
+    </div>
+  </div>
+
+</div>

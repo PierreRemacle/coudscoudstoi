@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<!--
+  Gestionnaire de patrons — Page de CRÉATION (new)
+  ----------------------------------------------------------------
+  Mockup HTML/CSS. Pour Ruby on Rails :
+   • Copier le <body> dans app/views/patrons/new.html.erb
+   • Envelopper .fields et .side dans un form_with :
+       <%= form_with model: @patron, html: { multipart: true } do |f| %> ... <% end %>
+     (multipart: true pour la photo + le PDF)
+   • Champs suggérés côté modèle :
+       nom, marque, genre, vetement, annee:integer, taille_type,
+       tailles (array/jsonb), metrage:decimal, matiere, poids,
+       difficulte, supports (array), photo (Active Storage),
+       fichier_pdf (Active Storage), notes (has_many, avec auteur + couleur)
+   • Charger patrons.css via <%= stylesheet_link_tag "patrons" %>
+-->
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nouveau patron</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="patrons.css">
+</head>
+<body>
+  <div class="app">
+
+    <!-- Rail latéral -->
+    <nav class="rail">
+      <div class="rail-logo"><i data-lucide="scissors"></i></div>
+      <a class="rail-btn" href="index.html" title="Bibliothèque"><i data-lucide="library"></i></a>
+      <a class="rail-btn is-active" href="new.html" title="Nouveau patron"><i data-lucide="plus-square"></i></a>
+      <a class="rail-btn" href="#" title="Favoris"><i data-lucide="heart"></i></a>
+      <div class="rail-spacer">
+        <a class="rail-btn" href="#" title="Réglages"><i data-lucide="settings"></i></a>
+        <div class="rail-avatar">M</div>
+      </div>
+    </nav>
+
+    <main class="main">
+
+      <header class="topbar">
+        <a class="rail-btn" href="index.html" style="color:#9a9aa8"><i data-lucide="arrow-left"></i></a>
+        <div>
+          <div class="topbar-title">Nouveau patron</div>
+          <div class="topbar-crumb">Bibliothèque · Ajouter une entrée</div>
+        </div>
+        <div class="topbar-actions">
+          <button type="reset" class="btn"><i data-lucide="rotate-ccw"></i>Réinitialiser</button>
+          <button type="submit" class="btn btn-primary"><i data-lucide="check"></i>Enregistrer</button>
+        </div>
+      </header>
+
+      <form class="form-wrap" method="post" action="index.html" enctype="multipart/form-data">
+
+        <!-- Colonne gauche : média + fichiers -->
+        <div class="side">
+          <div class="panel">
+            <div class="panel-title">Photo du patron</div>
+            <label class="dropzone">
+              <span class="ico"><i data-lucide="image-plus"></i></span>
+              <b>Glisser une image</b>
+              <span class="hint">JPG · PNG · 5 Mo max</span>
+              <input type="file" name="photo" accept="image/*" hidden>
+            </label>
+          </div>
+
+          <div class="panel">
+            <div class="panel-title">Fichiers du patron</div>
+            <div class="file-row">
+              <span class="file-ico"><i data-lucide="file-text"></i></span>
+              <div style="flex:1;min-width:0">
+                <div class="file-name">robe-capucine.pdf</div>
+                <div class="file-meta">2,4 Mo · 12 pages</div>
+              </div>
+              <i data-lucide="check-circle-2" style="color:#2f9e6b"></i>
+            </div>
+            <label class="attach"><i data-lucide="upload"></i>Joindre un PDF
+              <input type="file" name="fichier_pdf" accept="application/pdf" hidden>
+            </label>
+          </div>
+        </div>
+
+        <!-- Colonne droite : attributs -->
+        <div class="fields">
+
+          <div class="field">
+            <div class="field-label"><i data-lucide="type"></i>Nom</div>
+            <input class="input" type="text" name="nom" value="Robe Capucine">
+          </div>
+
+          <div class="field top">
+            <div class="field-label" style="padding-top:10px"><i data-lucide="tag"></i>Marque</div>
+            <div>
+              <select class="select" name="marque">
+                <option>Atelier Nord</option>
+                <option>Coupe Libre</option>
+                <option>Maison Fil</option>
+                <option>Patron Perso</option>
+              </select>
+              <div class="field-hint">Choisir ou <a class="link-accent" href="#">+ ajouter une nouvelle marque</a></div>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="field-label"><i data-lucide="users"></i>Genre</div>
+            <div class="chips">
+              <button type="button" class="chip is-active">Femme</button>
+              <button type="button" class="chip">Homme</button>
+              <button type="button" class="chip">Enfant</button>
+              <button type="button" class="chip">Bébé</button>
+              <button type="button" class="chip">Accessoire</button>
+              <button type="button" class="chip">Autre</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="field-label"><i data-lucide="shirt"></i>Vêtement</div>
+            <div class="row">
+              <select class="select" name="vetement" style="flex:1">
+                <option>Robe</option><option>Blouse</option><option>Jupe</option><option>Manteau</option>
+              </select>
+              <div class="with-ico" style="width:150px">
+                <i data-lucide="calendar"></i>
+                <input class="input" type="number" name="annee" value="2025" min="1950" max="2100">
+              </div>
+            </div>
+          </div>
+
+          <div class="field top">
+            <div class="field-label" style="padding-top:6px"><i data-lucide="ruler"></i>Taille</div>
+            <div>
+              <div class="seg-tabs">
+                <button type="button" class="seg-tab is-active">Lettres · XS – XXL</button>
+                <button type="button" class="seg-tab">Chiffres · 34 – 48</button>
+              </div>
+              <div class="size-grid">
+                <button type="button" class="size-btn is-active">XS</button>
+                <button type="button" class="size-btn">S</button>
+                <button type="button" class="size-btn is-active">M</button>
+                <button type="button" class="size-btn">L</button>
+                <button type="button" class="size-btn">XL</button>
+                <button type="button" class="size-btn">XXL</button>
+              </div>
+              <div class="info"><i data-lucide="info"></i>Intervalle sélectionné : XS → M · gestion des intervalles possible</div>
+            </div>
+          </div>
+
+          <div class="field top">
+            <div class="field-label" style="padding-top:10px"><i data-lucide="ruler-dimension-line"></i>Métrage</div>
+            <div>
+              <div class="input-unit">
+                <input class="input" type="text" name="metrage" value="2,50">
+                <span class="unit">m</span>
+              </div>
+              <div class="field-hint">Pour la recherche, utiliser une valeur maximale ou un intervalle.</div>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="field-label"><i data-lucide="grid-3x3"></i>Matière</div>
+            <select class="select" name="matiere">
+              <option>Viscose</option><option>Coton</option><option>Lin</option>
+              <option>Lainage</option><option>Jersey</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <div class="field-label"><i data-lucide="weight"></i>Poids</div>
+            <div class="seg-3">
+              <button type="button" class="seg-tab">Léger</button>
+              <button type="button" class="seg-tab is-active">Moyen</button>
+              <button type="button" class="seg-tab">Lourd</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="field-label"><i data-lucide="bar-chart-3"></i>Difficulté</div>
+            <div class="seg-3">
+              <button type="button" class="seg-tab">Facile</button>
+              <button type="button" class="seg-tab is-active">Moyenne</button>
+              <button type="button" class="seg-tab">Difficile</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="field-label"><i data-lucide="file-text"></i>Support</div>
+            <div class="support">
+              <label class="check is-on"><span class="check-box"><i data-lucide="check"></i></span>PDF</label>
+              <label class="check"><span class="check-box"></span>Papier A1</label>
+              <label class="check"><span class="check-box"></span>Papier A5</label>
+            </div>
+          </div>
+
+          <!-- Notes multi-auteurs -->
+          <div class="field top">
+            <div class="field-label" style="padding-top:4px"><i data-lucide="sticky-note"></i>Notes</div>
+            <div>
+              <div class="notes-legend">
+                <span class="author c-marie"><span class="dot bg-marie"></span>Marie</span>
+                <span class="author c-lea"><span class="dot bg-lea"></span>Léa</span>
+                <span class="author c-papa"><span class="dot bg-papa"></span>Papa</span>
+                <span class="legend-note">couleur = auteur</span>
+              </div>
+              <div class="notes">
+                <div class="note bl-marie">
+                  <div style="flex:1">
+                    <p>Cousue en viscose bleue — prévoir <b>+3 cm</b> aux emmanchures, elles taillent petit.</p>
+                    <div class="by">Marie · 12 mars</div>
+                  </div>
+                </div>
+                <div class="note bl-lea">
+                  <div style="flex:1">
+                    <p>Le col est plus joli entoilé. J'ai gardé les chutes pour les parementures.</p>
+                    <div class="by">Léa · 2 avril</div>
+                  </div>
+                </div>
+                <div class="note bl-papa">
+                  <div style="flex:1">
+                    <p>Métrage réel utilisé : 2,3 m en 140 de large.</p>
+                    <div class="by">Papa · 2 avril</div>
+                  </div>
+                </div>
+                <div class="note-add"><i data-lucide="plus"></i>Ajouter une note…</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </form>
+    </main>
+  </div>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>
