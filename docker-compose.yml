@@ -1,13 +1,28 @@
 services:
   web:
     build: .
-    ports:
-      - "3000:80"
+    container_name: coudscoudstoi_web
+    networks:
+      - web_gateway
     environment:
       RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
     volumes:
       - storage:/rails/storage
     restart: unless-stopped
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: coudscoudstoi_tunnel
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN}
+    networks:
+      - web_gateway
+    restart: unless-stopped
+    depends_on:
+      - web
+
+networks:
+  web_gateway:
+    external: true
 
 volumes:
   storage:
