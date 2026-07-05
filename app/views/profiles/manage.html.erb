@@ -1,0 +1,37 @@
+<header class="topbar">
+  <div>
+    <div class="topbar-title">Mon profil</div>
+    <div class="topbar-sub">Connecté en tant que <strong><%= current_user %></strong></div>
+  </div>
+</header>
+
+<div style="padding:24px 32px;display:flex;flex-direction:column;gap:24px;max-width:480px;">
+
+  <div class="panel">
+    <div class="panel-title"><i data-lucide="users"></i> Profils</div>
+    <% @profiles.each do |profile| %>
+      <div class="file-row">
+        <div class="rail-avatar" style="width:32px;height:32px;font-size:13px;flex-shrink:0;"><%= profile.nom.first %></div>
+        <span style="flex:1;font-weight:500;"><%= profile.nom %></span>
+        <% if profile.nom == current_user %>
+          <span style="font-size:12px;color:#9a9aa8;margin-right:8px;">vous</span>
+          <% if Profile.count > 1 %>
+            <%= button_to destroy_profile_path(profile), method: :delete,
+                  class: "btn", style: "padding:4px 10px;font-size:12px;",
+                  data: { turbo_confirm: "Supprimer votre profil ? Vous serez déconnecté." } do %>
+              <i data-lucide="trash-2" style="width:14px;height:14px;"></i>
+            <% end %>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+
+    <div style="margin-top:12px;border-top:1px solid #e8e8ef;padding-top:12px;">
+      <%= form_with model: @new_profile, url: profile_path, method: :post, style: "display:flex;gap:8px;" do |f| %>
+        <%= f.text_field :nom, class: "input", placeholder: "Nouveau profil", style: "flex:1;" %>
+        <%= f.submit "Ajouter", class: "btn btn-primary" %>
+      <% end %>
+    </div>
+  </div>
+
+</div>

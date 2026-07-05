@@ -1,0 +1,89 @@
+<header class="topbar">
+  <div>
+    <div class="topbar-title">Paramètres</div>
+    <div class="topbar-sub">Gérer les profils, marques et options</div>
+  </div>
+</header>
+
+<div style="padding:24px 32px;display:flex;flex-direction:column;gap:24px;max-width:720px;">
+
+  <!-- Marques -->
+  <div class="panel">
+    <div class="panel-title"><i data-lucide="tag"></i> Marques</div>
+    <% if @marques.any? %>
+      <% @marques.each do |marque| %>
+        <div class="file-row">
+          <span style="flex:1;font-weight:500;"><%= marque.nom %></span>
+          <%= button_to marque_path(marque), method: :delete,
+                class: "btn", style: "padding:4px 10px;font-size:12px;",
+                data: { turbo_confirm: "Supprimer la marque « #{marque.nom} » ? Les patrons associés perdront leur marque." } do %>
+            <i data-lucide="trash-2" style="width:14px;height:14px;"></i>
+          <% end %>
+        </div>
+      <% end %>
+    <% else %>
+      <p style="color:#9a9aa8;font-size:13px;margin:0;">Aucune marque enregistrée.</p>
+    <% end %>
+    <div style="margin-top:12px;border-top:1px solid #e8e8ef;padding-top:12px;">
+      <%= form_with model: Marque.new, url: marques_path, style: "display:flex;gap:8px;" do |f| %>
+        <%= f.text_field :nom, class: "input", placeholder: "Nouvelle marque", style: "flex:1;" %>
+        <%= f.submit "Ajouter", class: "btn btn-primary" %>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Vêtements -->
+  <div class="panel">
+    <div class="panel-title"><i data-lucide="shirt"></i> Types de vêtements</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+      <% @vetements.each do |item| %>
+        <div style="display:flex;align-items:center;gap:4px;background:#f0f0f8;border-radius:20px;padding:4px 10px 4px 14px;font-size:13px;font-weight:500;">
+          <%= item.valeur %>
+          <%= button_to liste_path(item), method: :delete,
+                class: "btn", style: "padding:2px 4px;background:none;border:none;min-width:0;",
+                data: { turbo_confirm: "Supprimer « #{item.valeur} » ?" } do %>
+            <i data-lucide="x" style="width:12px;height:12px;color:#9a9aa8;"></i>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+    <%= form_with model: Liste.new, url: listes_path, style: "display:flex;gap:8px;" do |f| %>
+      <%= f.hidden_field :kind, value: "vetement" %>
+      <%= f.text_field :valeur, class: "input", placeholder: "Nouveau type…", style: "flex:1;" %>
+      <%= f.submit "Ajouter", class: "btn btn-primary" %>
+    <% end %>
+  </div>
+
+  <!-- Matières -->
+  <div class="panel">
+    <div class="panel-title"><i data-lucide="grid-3x3"></i> Matières</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+      <% @matieres.each do |item| %>
+        <div style="display:flex;align-items:center;gap:4px;background:#f0f0f8;border-radius:20px;padding:4px 10px 4px 14px;font-size:13px;font-weight:500;">
+          <%= item.valeur %>
+          <%= button_to liste_path(item), method: :delete,
+                class: "btn", style: "padding:2px 4px;background:none;border:none;min-width:0;",
+                data: { turbo_confirm: "Supprimer « #{item.valeur} » ?" } do %>
+            <i data-lucide="x" style="width:12px;height:12px;color:#9a9aa8;"></i>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+    <%= form_with model: Liste.new, url: listes_path, style: "display:flex;gap:8px;" do |f| %>
+      <%= f.hidden_field :kind, value: "matiere" %>
+      <%= f.text_field :valeur, class: "input", placeholder: "Nouvelle matière…", style: "flex:1;" %>
+      <%= f.submit "Ajouter", class: "btn btn-primary" %>
+    <% end %>
+  </div>
+
+  <!-- Genre (système) -->
+  <div class="panel">
+    <div class="panel-title"><i data-lucide="lock"></i> Genre <span style="font-size:12px;font-weight:400;color:#9a9aa8;margin-left:6px;">défini par le système</span></div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+      <% [["Femme","femme"],["Homme","homme"],["Enfant","enfant"],["Bébé","bebe"],["Accessoire","accessoire"],["Autre","autre"]].each do |label, _| %>
+        <span style="background:#f0f0f8;border-radius:20px;padding:5px 14px;font-size:13px;font-weight:500;color:#9a9aa8;"><%= label %></span>
+      <% end %>
+    </div>
+  </div>
+
+</div>

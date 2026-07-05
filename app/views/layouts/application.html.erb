@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
+    <link rel="icon" type="image/svg+xml" href="/icon.svg">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,10 +27,15 @@
           <i data-lucide="plus-square"></i>
         <% end %>
         <div class="rail-spacer">
+          <%= link_to settings_path, class: "rail-btn #{controller_name == 'settings' ? 'is-active' : ''}", title: "Paramètres" do %>
+            <i data-lucide="settings"></i>
+          <% end %>
           <%= button_to session_path, method: :delete, class: "rail-btn", title: "Déconnexion", style: "background:none;border:none;cursor:pointer;" do %>
             <i data-lucide="log-out"></i>
           <% end %>
-          <div class="rail-avatar"><%= current_user&.first %></div>
+          <%= link_to manage_profile_path, class: "rail-avatar #{controller_name == 'profiles' && action_name == 'manage' ? 'is-active' : ''}", title: current_user, style: "text-decoration:none;" do %>
+            <%= current_user&.first %>
+          <% end %>
         </div>
       </nav>
 

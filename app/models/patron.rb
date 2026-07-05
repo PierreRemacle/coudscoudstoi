@@ -8,9 +8,6 @@ class Patron < ApplicationRecord
   attribute :tailles,  :json, default: []
   attribute :supports, :json, default: []
 
-  VETEMENTS = %w[Robe Blouse Jupe Manteau Pantalon Haut Short Veste Combinaison Accessoire Autre].freeze
-  MATIERES  = %w[Viscose Coton Lin Lainage Jersey Satin Denim Velours Mousseline Autre].freeze
-
   enum :genre,       { femme: 0, homme: 1, enfant: 2, bebe: 3, accessoire: 4, autre: 5 }
   enum :poids,       { leger: 0, moyen: 1, lourd: 2 }
   enum :difficulte,  { facile: 0, moyenne: 1, difficile: 2 }

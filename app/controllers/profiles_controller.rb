@@ -1,6 +1,11 @@
 class ProfilesController < ApplicationController
-  layout "auth"
-  skip_before_action :require_profile
+  layout "auth", only: [ :show, :update, :create ]
+  skip_before_action :require_profile, only: [ :show, :update, :create ]
+
+  def manage
+    @profiles    = Profile.par_nom
+    @new_profile = Profile.new
+  end
 
   def show
     @profiles = Profile.par_nom
@@ -25,6 +30,19 @@ class ProfilesController < ApplicationController
     else
       @profiles = Profile.par_nom
       render :show, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    profile = Profile.find(params[:id])
+    if profile.nom != current_user
+      redirect_to manage_profile_path, alert: "Vous ne pouvez supprimer que votre propre profil."
+    elsif Profile.count <= 1
+      redirect_to manage_profile_path, alert: "Impossible de supprimer le dernier profil."
+    else
+      profile.destroy
+      reset_session
+      redirect_to new_session_path, notice: "Profil supprimé. Veuillez vous reconnecter."
     end
   end
 

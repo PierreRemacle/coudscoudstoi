@@ -104,7 +104,7 @@
       <div class="field-label"><i data-lucide="shirt"></i>Vêtement</div>
       <div class="row">
         <%= f.select :vetement,
-              options_for_select(Patron::VETEMENTS, patron.vetement),
+              options_for_select(Liste.valeurs("vetement"), patron.vetement),
               { include_blank: "— choisir —" },
               class: "select", style: "flex:1" %>
       </div>
@@ -176,7 +176,7 @@
     <div class="field">
       <div class="field-label"><i data-lucide="grid-3x3"></i>Matière</div>
       <%= f.select :matiere,
-            options_for_select(Patron::MATIERES, patron.matiere),
+            options_for_select(Liste.valeurs("matiere"), patron.matiere),
             { include_blank: "— choisir —" },
             class: "select" %>
     </div>

@@ -31,7 +31,7 @@
   <div class="filter-group">
     <div class="filter-label">Vêtement</div>
     <div class="chips" style="flex-wrap:wrap;" data-controller="multichip">
-      <% Patron::VETEMENTS.each do |v| %>
+      <% Liste.valeurs("vetement").each do |v| %>
         <button type="button"
                 class="chip <%= Array(params[:vetement]).include?(v) ? 'is-active' : '' %>"
                 data-action="click->multichip#toggleChip">
@@ -47,7 +47,7 @@
   <div class="filter-group">
     <div class="filter-label">Matière</div>
     <div class="chips" style="flex-wrap:wrap;" data-controller="multichip">
-      <% Patron::MATIERES.each do |m| %>
+      <% Liste.valeurs("matiere").each do |m| %>
         <button type="button"
                 class="chip <%= Array(params[:matiere]).include?(m) ? 'is-active' : '' %>"
                 data-action="click->multichip#toggleChip">
