@@ -1,0 +1,16 @@
+name: Deploy
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Pull latest main and redeploy
+        run: |
+          cd /home/pir/apps/coudscoudstoi
+          git fetch origin main
+          git reset --hard origin/main
+          docker compose --env-file .env up -d --build
