@@ -75,3 +75,5 @@ Implications:
   running app — check before assuming it's live code.
 - No staging environment exists; `main` is production. Consider a feature-branch + PR review
   habit before merging, since merges deploy immediately.
+
+<!-- deploy test: 2026-07-05 -->
